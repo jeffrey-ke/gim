@@ -1,0 +1,30 @@
+[project]
+name = "gim"
+version = "0.1.0"
+description = "GIM: Learning Generalizable Image Matcher (xuelunshen/gim), packaged for editable install."
+requires-python = ">=3.11"
+# Unpinned so they float to the consuming env (e.g. isaacsim's torch 2.7 /
+# numpy 1.26). GIM's environment.yaml pins (torch 1.12 / PL 1.5 / kornia 0.6)
+# predate py3.11+torch2.0 and won't import here.
+dependencies = [
+    "torch",
+    "torchvision",
+    "numpy",
+    "einops",
+    "kornia",
+    "opencv-python",
+    "yacs",
+    "loguru",
+    "pytorch-lightning",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Flat layout: only the import subset used downstream. networks.* and tools are
+# top-level (GIM's own code imports them unqualified). trainer/hloc/mit_semseg
+# are intentionally excluded; note networks/loftr/configs/outdoor imports
+# `trainer`, so the LoFTR backend would need `trainer` added here if exercised.
+[tool.hatch.build.targets.wheel]
+packages = ["networks", "tools"]
